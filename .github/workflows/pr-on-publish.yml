@@ -21,4 +21,4 @@ jobs:
       - name: Create Pull Request
         uses: CalefiGustavo/create-pull-request@v3
         with:
-          branch: pr_${{ steps.extract_branch.outputs.branch }}_main
+          branch: ${{ steps.extract_branch.outputs.branch }}
