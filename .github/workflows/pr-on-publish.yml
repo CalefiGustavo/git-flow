@@ -4,7 +4,7 @@ on:
     branches:
       - 'feature/**'
 jobs:
-  productionPromotion:
+  createPullRequest:
     runs-on: ubuntu-latest
     steps:
       - name: Extract branch name
@@ -13,7 +13,7 @@ jobs:
         id: extract_branch
       - uses: actions/checkout@v2
         with:
-          ref: main
+          ref: develop
       - name: Reset feature branch
         run: |
           git fetch origin ${{ steps.extract_branch.outputs.branch }}:${{ steps.extract_branch.outputs.branch }}
