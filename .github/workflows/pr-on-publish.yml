@@ -8,11 +8,12 @@ jobs:
   createPullRequest:
     runs-on: ubuntu-latest
     steps:
-    - name: Extract branch name
-      shell: bash
-      run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
-    - name: Test
-      run: echo "${{ steps.extract_branch.outputs.branch }}"
+      - name: Extract branch name
+        shell: bash
+        run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
+        id: extract_branch
+      - name: Test
+        run: echo "${{ steps.extract_branch.outputs.branch }}"
 
       # - name: Extract branch name
       #   shell: bash
