@@ -10,10 +10,14 @@ jobs:
     steps:
       - name: Extract branch name
         shell: bash
-        run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/feature/})"
+        run: | 
+          echo "##[set-output name=feature_branch;]$(echo ${GITHUB_REF#refs/heads/})"
+          echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/feature/})"
         id: extract_branch
       - name: Test
-        run: echo "${{ steps.extract_branch.outputs.branch }}"
+        run: | 
+          echo "${{ steps.extract_branch.outputs.feature_branch }}"
+          echo "${{ steps.extract_branch.outputs.branch }}"
 
       # - name: Extract branch name
       #   shell: bash
