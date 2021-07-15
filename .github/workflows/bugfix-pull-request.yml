@@ -1,0 +1,29 @@
+name: Create PR for bugfix branches
+on:
+  push:
+    branches:
+      - 'bugfix/**'
+      
+jobs:
+  createPullRequest:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Extract branch name
+        shell: bash
+        run: | 
+          echo "##[set-output name=bugfix_branch;]$(echo ${GITHUB_REF#refs/heads/})"
+          echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/hotfix/})"
+        id: extract_branch
+      - uses: actions/checkout@v2
+        with:
+          ref: develop
+      - name: Reset branch
+        run: |
+          git fetch origin ${{ steps.extract_branch.outputs.bugfix_branch }}:${{ steps.extract_branch.outputs.bugfix_branch }}
+          git reset --hard ${{ steps.extract_branch.outputs.bugfix_branch }}
+      - name: Create Pull Request
+        uses: CalefiGustavo/create-pull-request@v3
+        with:
+          branch: ${{ steps.extract_branch.outputs.bugfix_branch }}
+          commit-message: Pull request for new bugfix
+          title: Feature ${{ steps.extract_branch.outputs.branch }}
