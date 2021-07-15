@@ -1,0 +1,60 @@
+name: Create PR from release branches
+on:
+  push:
+    branches:
+      - 'release/**'
+
+jobs:
+  createPullRequest:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Extract branch name
+        shell: bash
+        run: | 
+          echo "##[set-output name=release_branch;]$(echo ${GITHUB_REF#refs/heads/})"
+          echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/release/})"
+        id: extract_branch
+      - uses: actions/checkout@v2
+        with:
+          ref: master
+      - name: Reset feature branch
+        run: |
+          git fetch origin ${{ steps.extract_branch.outputs.release_branch }}:${{ steps.extract_branch.outputs.release_branch }}
+          git reset --hard ${{ steps.extract_branch.outputs.release_branch }}
+      - name: Create Pull Request
+        uses: CalefiGustavo/create-pull-request@v3
+        with:
+          branch: ${{ steps.extract_branch.outputs.release_branch }}
+          commit-message: Pull request for new release
+          title: Release ${{ steps.extract_branch.outputs.branch }}
+          
+name: Create PR for hotfix branches
+on:
+  push:
+    branches:
+      - 'hotfix/**'
+      
+jobs:
+  createPullRequest:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Extract branch name
+        shell: bash
+        run: | 
+          echo "##[set-output name=hotfix_branch;]$(echo ${GITHUB_REF#refs/heads/})"
+          echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/hotfix/})"
+        id: extract_branch
+      - uses: actions/checkout@v2
+        with:
+          ref: develop
+      - name: Reset feature branch
+        run: |
+          git fetch origin ${{ steps.extract_branch.outputs.hotfix_branch }}:${{ steps.extract_branch.outputs.hotfix_branch }}
+          git reset --hard ${{ steps.extract_branch.outputs.hotfix_branch }}
+      - name: Create Pull Request
+        uses: CalefiGustavo/create-pull-request@v3
+        with:
+          branch: ${{ steps.extract_branch.outputs.hotfix_branch }}
+          commit-message: Pull request for new hotfix
+          title: Feature ${{ steps.extract_branch.outputs.branch }}
+          
